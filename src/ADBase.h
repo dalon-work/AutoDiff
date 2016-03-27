@@ -1,7 +1,13 @@
-#ifndef AUTODIFF
-#define AUTODIFF
+#ifndef ADBASE
+#define ADBASE
 
-namespace AutoDiff
+#include "Macros.h"
+#include "ForwardDeclarations.h"
+#include "BinaryOp.h"
+#include "ConstantOp.h"
+#include "UnaryOp.h"
+
+namespace AD
 {
 
 template <typename Derived>
@@ -10,7 +16,7 @@ class ADBase
 
 public:
 
-	typedef typename internal::traits<Derived>::Scalar T;
+   static const int nDeriv = internal::traits<Derived>::nDeriv;
 
 	ADBase()=default;
 	ADBase(const ADBase<Derived>&)=default;
@@ -18,54 +24,22 @@ public:
 	~ADBase()=default;
 
 
-// 	inline Derived& operator = (const ADBase<Derived>& B) {
-// #ifndef NDEBUG
-// 		internal::debug::compare_dims(derived(),B.derived());
-// #endif
-// #pragma GCC ivdep
-// 		for (int i=0; i<this->size(); i++) {
-// 			derived()[i] = B.derived()[i];
-// 		}
-// 		return derived();
-// 	}
+	inline Derived& operator = (const ADBase<Derived>& B) {
+      derived().eval() = B.derived().eval();
+		return derived();
+	}
 
-// 	inline Derived& operator = (ADBase<Derived>&& B) {
-// #ifndef NDEBUG
-// 		internal::debug::compare_dims(derived(),B.derived());
-// #endif
-// #pragma GCC ivdep
-// 		for (int i=0; i<this->size(); i++) {
-// 			derived()[i] = B.derived()[i];
-// 		}
-// 		return derived();
-// 	}
+	inline Derived& operator = (ADBase<Derived>&& B) {
+      derived().eval() = B.derived().eval();
+		return derived();
+	}
 
-// 	#<{(|*
-// 	 * Sets the entire array to a given value
-// 	 |)}>#
-// 	inline const T& operator = (const T& B) {
-// #pragma GCC ivdep
-// 		for (int i=0; i < size(); i++) {
-// 			derived()[i] = B;
-// 		}
-// 		return B;
-// 	}
+	template<typename OtherDerived>
+	inline Derived& operator = (const ADBase<OtherDerived>& B) {
+      derived().eval() = B.derived().eval();
+		return derived();
+	}
 
-// 	template<typename OtherDerived>
-// 	inline Derived& operator = (const ADBase<OtherDerived>& B) {
-// #ifndef NDEBUG
-// 		internal::debug::compare_dims(derived(),B.derived());
-// #endif
-// #pragma GCC ivdep
-// 		for (int i=0; i<this->size(); i++) {
-// 			derived()[i] = static_cast<T>(B.derived()[i]);
-// 		}
-// 		return derived();
-// 	}
-//
-// 	constexpr int size() const { return derived().size(); }
-// 	constexpr int size(int i) const { return derived().size(i); }
-//
 // 	#<{(|*
 // 	 * += and -= operators
 // 	 |)}>#
@@ -99,10 +73,15 @@ public:
 
 	/************************************************/
 
-   // FortCpp_BASE_BINARY_OP(AddBinOp,+)
-   // FortCpp_BASE_BINARY_OP(SubBinOp,-)
-   // FortCpp_BASE_BINARY_OP(MulBinOp,*)
-   // FortCpp_BASE_BINARY_OP(DivBinOp,/)
+   AutoDiff_BASE_BINARY_OP(AddBinOp,+)
+   AutoDiff_BASE_BINARY_OP(SubBinOp,-)
+   AutoDiff_BASE_BINARY_OP(MulBinOp,*)
+   AutoDiff_BASE_BINARY_OP(DivBinOp,/)
+
+   inline const UnaryOp<Derived,NegUnOp<nDeriv> > operator -() const {
+      return UnaryOp<Derived,NegUnOp<nDeriv> >(derived(),NegUnOp<nDeriv>());
+   }
+
    // FortCpp_BASE_BINARY_OP(LesBinOp,<)
    // FortCpp_BASE_BINARY_OP(GreBinOp,>)
    // FortCpp_BASE_BINARY_OP(LEqBinOp,<=)
@@ -138,6 +117,6 @@ public:
 	// }
 };
 
-}; // end namespace AutoDiff
+}; // end namespace AD
 
 #endif
