@@ -40,6 +40,7 @@ public:
 
 	template<typename OtherDerived>
 	inline Derived& operator = (const ADBase<OtherDerived>& B) {
+      static_assert( nDeriv == internal::traits<OtherDerived>::nDeriv , "Number of derivatives used does not match in equation");
       derived().x() = B.derived().x();
       for(int i=0;i<nDeriv;i++) {
          derived().dx(i) = B.derived().dx(i);
@@ -105,23 +106,9 @@ public:
 	// 	return UnaryOp<Derived,NegUnOp<T> >(this->derived(),NegUnOp<T>());
 	// }
 
-	//
-	//  inline explicit operator bool() const {
-	//    for(int i=0;i<derived().size();i++){
-	//      if(derived()[i]) return 1;
-	//    }
-	//    return 0;
-	//  }
-
 	const Derived& derived() const { return *static_cast<const Derived*>(this); }
 	Derived& derived() { return *static_cast<Derived*>(this); }
 
-	// friend std::ostream& operator << (std::ostream& os, const ADBase<Derived>& A) {
-	// 	for (int i=0; i<A.size(); i++) {
-	// 		os << A.derived()[i] << ' ';
-	// 	}
-	// 	return os;
-	// }
 };
 
 }; // end namespace AD

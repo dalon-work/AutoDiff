@@ -40,11 +40,14 @@ class ConstantOp<internal::LHS,Rhs,Op> : public ADBase<ConstantOp<internal::LHS,
 
   public:
   inline ConstantOp(const double &C, const Rhs &rhs,const Op &op): _c(C), _rhs(rhs), _op(op) {};
-  inline ConstantOp(const ConstantOp &A) : _c(A._c), _rhs(A._rhs), _op(A._op)
-  { }
+  inline ConstantOp(const ConstantOp &A) : _c(A._c), _rhs(A._rhs), _op(A._op) { }
 
-  inline T eval() const{
-    return _op.eval(_c,_rhs.eval());
+  inline double x() const{
+    return _op.x(_c, _rhs.x());
+  }
+
+  inline double dx(const int& i) const {
+    return _op.x(_c, 0.0, _rhs.x(), _rhs.dx(i));
   }
 
 };
@@ -67,98 +70,22 @@ class ConstantOp<internal::RHS,Lhs,Op> : public ADBase<ConstantOp<internal::RHS,
   inline ConstantOp(const Lhs &lhs,const double &C, const Op &op): _c(C), _lhs(lhs), _op(op) {}
   inline ConstantOp(const ConstantOp &A) : _c(A._c), _lhs(A._lhs), _op(A._op) {}
 
-  inline T eval() const{
-    return _op.eval(_lhs.eval(),_c);
+  inline double x() const {
+    return _op.x(_lhs.x(), _c);
+  }
+
+  inline double dx(const int& i) const {
+    return _op.dx(_lhs.x(), _lhs.dx(i), _c, 0.0);
   }
 
   inline const Lhs& getExpr() const { return _lhs; }
 
 };
 
-template<int nDeriv>
-struct AddConOp
-{
-   typedef AutoDiff<nDeriv> T;
-   inline static const
-      T eval(const T& lhs,const double& rhs){
-         T a;
-         a.x  = lhs.x + rhs;
-         a.dx = lhs.dx;
-         return a;
-      }
-   inline static const
-      T eval(const double& lhs,const T& rhs){
-         T a;
-         a.x  = lhs + rhs.x;
-         a.dx = rhs.dx;
-         return a;
-      }
-};
-
-template<int nDeriv>
-struct SubConOp
-{
-   typedef AutoDiff<nDeriv> T;
-   inline static const
-      T eval(const T& lhs,const double& rhs){
-         T a;
-         a.x  = lhs.x - rhs;
-         a.dx = lhs.dx;
-         return a;
-      }
-   inline static const
-      T eval(const double& lhs,const T& rhs){
-         T a;
-         a.x  = lhs - rhs.x;
-         a.dx = -rhs.dx;
-         return a;
-      }
-};
-
-template<int nDeriv>
-struct MulConOp
-{
-   typedef AutoDiff<nDeriv> T;
-   inline static const
-      T eval(const T& lhs,const double& rhs){
-         T a;
-         a.x  = lhs.x * rhs;
-         a.dx = lhs.dx*rhs;
-         return a;
-      }
-   inline static const
-      T eval(const double& lhs,const T& rhs){
-         T a;
-         a.x  = lhs * rhs.x;
-         a.dx = lhs*rhs.dx;
-         return a;
-      }
-};
-
-template<int nDeriv>
-struct DivConOp
-{
-   typedef AutoDiff<nDeriv> T;
-   inline static const
-      T eval(const T& lhs,const double& rhs){
-         T a;
-         a.x  = lhs.x /rhs;
-         a.dx = lhs.dx/rhs;
-         return a;
-      }
-   inline static const
-      T eval(const double& lhs,const T& rhs){
-         T a;
-         a.x  =  lhs /rhs.x;
-         a.dx = -(lhs*rhs.dx)/(rhs.x*rhs.x);
-         return a;
-      }
-};
-
-AutoDiff_LHS_CONSTANT_OP(AddConOp,+)
-AutoDiff_LHS_CONSTANT_OP(SubConOp,-)
-AutoDiff_LHS_CONSTANT_OP(MulConOp,*)
-AutoDiff_LHS_CONSTANT_OP(DivConOp,/)
+AutoDiff_LHS_CONSTANT_OP(AddBinOp,+)
+AutoDiff_LHS_CONSTANT_OP(SubBinOp,-)
+AutoDiff_LHS_CONSTANT_OP(MulBinOp,*)
+AutoDiff_LHS_CONSTANT_OP(DivBinOp,/)
 
 // AutoDiff_LHS_CONSTANT_OP(LesConOp,<)
 // AutoDiff_LHS_CONSTANT_OP(GreConOp,>)
@@ -167,10 +94,10 @@ AutoDiff_LHS_CONSTANT_OP(DivConOp,/)
 // AutoDiff_LHS_CONSTANT_OP(EquConOp,==)
 // AutoDiff_LHS_CONSTANT_OP(NEqConOp,!=)
 
-AutoDiff_RHS_CONSTANT_OP(AddConOp,+)
-AutoDiff_RHS_CONSTANT_OP(SubConOp,-)
-AutoDiff_RHS_CONSTANT_OP(MulConOp,*)
-AutoDiff_RHS_CONSTANT_OP(DivConOp,/)
+AutoDiff_RHS_CONSTANT_OP(AddBinOp,+)
+AutoDiff_RHS_CONSTANT_OP(SubBinOp,-)
+AutoDiff_RHS_CONSTANT_OP(MulBinOp,*)
+AutoDiff_RHS_CONSTANT_OP(DivBinOp,/)
 
 // AutoDiff_RHS_CONSTANT_OP(LesConOp,<)
 // AutoDiff_RHS_CONSTANT_OP(GreConOp,>)

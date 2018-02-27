@@ -1,4 +1,3 @@
-#include "../../FortCpp/FortCpp.h"
 #include "../src/AutoDiff.h"
 #include <iostream>
 
@@ -7,7 +6,6 @@ int main()
 
    using namespace AD;
    using namespace std;
-   using namespace FortCpp;
 
    AutoDiff<1> a,b,c,d;
 
