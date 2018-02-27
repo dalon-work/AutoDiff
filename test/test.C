@@ -11,35 +11,13 @@ int main()
 
    AutoDiff<1> a,b,c,d;
 
-   Alloc< AutoDiff<1> ,1> e,f,g;
+   a.x() = 3.0;
+   a.dx(0) = 1.0;
 
-   e.allocate(10);
-   f.allocate(10);
-   g.allocate(10);
+   b = a*a*a;
 
-   for(int i=0;i<10;i++){
-      e[i] = 3.0;
-      f[i].x  = i;
-      f[i].dx = 1.0;
-   }
-
-   g = f*f*f;
-
-   cout << g << endl;
-   
-   // a = 2.0;
-   // a.dx = 1.0;
-   //
-   // d = a;
-   //
-   // cout << d << endl;
-   //
-   // d = a*a;
-   // cout << d << endl;
-
-
-
-
+   cout << "a: " << a << endl;
+   cout << "b: " << b << endl;
 
 
 }

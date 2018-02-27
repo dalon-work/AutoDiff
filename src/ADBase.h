@@ -25,18 +25,25 @@ public:
 
 
 	inline Derived& operator = (const ADBase<Derived>& B) {
-      derived().eval() = B.derived().eval();
+      derived().x() = B.derived().x();
+      derived().dx() = B.derived().dx();
 		return derived();
 	}
 
 	inline Derived& operator = (ADBase<Derived>&& B) {
-      derived().eval() = B.derived().eval();
+      derived().x() = B.derived().x();
+      for(int i=0; i<nDeriv; i++) {
+         derived().dx[i] = B.derived().dx(i);
+      }
 		return derived();
 	}
 
 	template<typename OtherDerived>
 	inline Derived& operator = (const ADBase<OtherDerived>& B) {
-      derived().eval() = B.derived().eval();
+      derived().x() = B.derived().x();
+      for(int i=0;i<nDeriv;i++) {
+         derived().dx(i) = B.derived().dx(i);
+      }
 		return derived();
 	}
 
@@ -78,9 +85,9 @@ public:
    AutoDiff_BASE_BINARY_OP(MulBinOp,*)
    AutoDiff_BASE_BINARY_OP(DivBinOp,/)
 
-   inline const UnaryOp<Derived,NegUnOp<nDeriv> > operator -() const {
-      return UnaryOp<Derived,NegUnOp<nDeriv> >(derived(),NegUnOp<nDeriv>());
-   }
+   // inline const UnaryOp<Derived,NegUnOp<nDeriv> > operator -() const {
+   //    return UnaryOp<Derived,NegUnOp<nDeriv> >(derived(),NegUnOp<nDeriv>());
+   // }
 
    // FortCpp_BASE_BINARY_OP(LesBinOp,<)
    // FortCpp_BASE_BINARY_OP(GreBinOp,>)

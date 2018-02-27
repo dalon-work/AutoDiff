@@ -33,8 +33,11 @@ public:
 	};
 	BinaryOp(const BinaryOp& A) : _lhs(A._lhs), _rhs(A._rhs), _op(A._op) { }
 
-	T eval() const {
-		return _op.eval(_lhs.eval(),_rhs.eval());
+	double x() const {
+		return _op.x(_lhs.x(),_rhs.x());
+	}
+	double dx(const int& i) const {
+		return _op.dx(_lhs.x(), _lhs.dx(i), _rhs.x(), _rhs.dx(i));
 	}
 
 };
@@ -42,13 +45,13 @@ public:
 template<int nDeriv>
 struct AddBinOp
 {
-   typedef AutoDiff<nDeriv> T;
    inline static const
-      T eval(const T& lhs,const T& rhs){
-         T a;
-         a.x  = lhs.x + rhs.x;
-         a.dx = lhs.dx + rhs.dx;
-         return a;
+      double x(const double& lhs_x,const double& rhs_x){
+         return lhs_x + rhs_x;
+      }
+   inline static const
+      double dx(const double& lhs_x,const double& lhs_dx, const double& rhs_x, const double& rhs_dx){
+         return lhs_dx + rhs_dx;
       }
 };
 
@@ -68,13 +71,13 @@ struct SubBinOp
 template<int nDeriv>
 struct MulBinOp
 {
-   typedef AutoDiff<nDeriv> T;
    inline static const
-      T eval(const T& lhs,const T& rhs){
-         T a;
-         a.x  = lhs.x * rhs.x;
-         a.dx = lhs.dx*rhs.x + lhs.x*rhs.dx;
-         return a;
+      double x(const double& lhs_x,const double& rhs_x){
+         return lhs_x * rhs_x;
+      }
+   inline static const
+      double dx(const double& lhs_x,const double& lhs_dx, const double& rhs_x, const double& rhs_dx){
+         return lhs_x * rhs_dx + lhs_dx * rhs_x;
       }
 };
 

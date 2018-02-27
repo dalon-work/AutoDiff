@@ -2,6 +2,7 @@
 #define AUTODIFF
 
 #include "ADBase.h"
+#include <array>
 
 namespace AD
 {
@@ -19,35 +20,28 @@ template<int nDeriv>
 class AutoDiff : public ADBase< AutoDiff<nDeriv> >
 {
    public:
-      double x;
-      FortCpp::Fixed<double,nDeriv> dx;
+      double _x;
+      std::array<double,nDeriv> _dx;
 
       typedef class AutoDiff Derived;
       typedef class ADBase< AutoDiff<nDeriv> > Base;
 
-      AutoDiff()=default;
+      AutoDiff() {};
 
       AutoDiff(const AutoDiff&)=default;
       AutoDiff(AutoDiff&&)=default;
 
       Derived& operator = (const AutoDiff& B)
       {
-         (*this).x = B.x;
-         (*this).dx = B.dx;
+         this->_x = B._x;
+         this->_dx = B._dx;
          return *this;
       }
       Derived& operator = (AutoDiff&& B)
       {
-         (*this).x = B.x;
-         (*this).dx = B.dx;
+         this->_x = B._x;
+         this->_dx = B._dx;
          return *this;
-      }
-
-      double operator = (double B)
-      {
-         x = B;
-         dx = 0.0;
-         return B;
       }
 
       template<typename OtherDerived>
@@ -55,20 +49,33 @@ class AutoDiff : public ADBase< AutoDiff<nDeriv> >
          return Base::operator = (B);
       }
 
-      Derived& eval() {
-         return *this;
-      }
-      const Derived& eval() const {
-         return *this;
+      double& x() {
+         return _x;
       }
 
-   friend std::ostream& operator << (std::ostream& os, const AutoDiff<nDeriv>& A)
-   {
-      os << "x : " << A.x << " dx: " << A.dx << std::endl;
-      return os;
-   }
+      const double & x() const {
+         return _x;
+      }
+
+      double& dx(const int& i) {
+         return _dx[i];
+      }
+
+      const double& dx(const int& i) const {
+         return _dx[i];
+      }
+
+      friend std::ostream& operator << (std::ostream& os, const AutoDiff<nDeriv>& A)
+      {
+         os << "x : " << A.x() << " dx: ";
+         for(int i=0;i<nDeriv;i++) {
+            os << A.dx(i) << ' ';
+         }
+         return os;
+      }
 
 };
+
 
 }; // end namespace AD
 
