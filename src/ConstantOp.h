@@ -47,7 +47,7 @@ class ConstantOp<internal::LHS,Rhs,Op> : public ADBase<ConstantOp<internal::LHS,
   }
 
   inline double dx(const int& i) const {
-    return _op.x(_c, 0.0, _rhs.x(), _rhs.dx(i));
+    return _op.dx(_c, 0.0, _rhs.x(), _rhs.dx(i));
   }
 
 };
