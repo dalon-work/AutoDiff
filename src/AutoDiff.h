@@ -2,6 +2,7 @@
 #define AUTODIFF
 
 #include "ADBase.h"
+#include <ostream>
 #include <array>
 
 namespace AD

@@ -48,36 +48,6 @@ public:
 		return derived();
 	}
 
-// 	#<{(|*
-// 	 * += and -= operators
-// 	 |)}>#
-// 	inline Derived& operator += (const T& B) {
-// 		derived() = derived() + B;
-// 		return derived();
-// 	}
-//
-// 	template<typename OtherDerived>
-// 	inline Derived& operator += (const ADBase<OtherDerived>& B) {
-// #ifndef NDEBUG
-// 		internal::debug::compare_dims(derived(),B.derived());
-// #endif
-// 		derived() = derived() + B.derived();
-// 		return derived();
-// 	}
-//
-// 	inline Derived& operator -= (const T& B) {
-// 		derived() = derived() - B;
-// 		return derived();
-// 	}
-//
-// 	template<typename OtherDerived>
-// 	inline Derived& operator -= (const ADBase<OtherDerived>& B) {
-// #ifndef NDEBUG
-// 		internal::debug::compare_dims(derived(),B.derived());
-// #endif
-// 		derived() = derived() - B.derived();
-// 		return derived();
-// 	}
 
 	/************************************************/
 
