@@ -60,11 +60,13 @@ struct SubBinOp
 {
    typedef AutoDiff<nDeriv> T;
    inline static const
-      T eval(const T& lhs,const T& rhs){
-         T a;
-         a.x  = lhs.x - rhs.x;
-         a.dx = lhs.dx - rhs.dx;
-         return a;
+      double x(const double& lhs_x,const double& rhs_x){
+         return lhs_x - rhs_x;
+      }
+
+   inline static const
+      double dx(const double& lhs_x, const double& lhs_dx, const double& rhs_x, const double& rhs_dx){
+         return lhs_dx - rhs_dx;
       }
 };
 
@@ -84,13 +86,14 @@ struct MulBinOp
 template<int nDeriv>
 struct DivBinOp
 {
-   typedef AutoDiff<nDeriv> T;
    inline static const
-      T eval(const T& lhs,const T& rhs){
-         T a;
-         a.x  = lhs.x / rhs.x;
-         a.dx = (lhs.dx*rhs.x - lhs.x*rhs.dx)/(rhs.x*rhs.x);
-         return a;
+      double x(const double& lhs_x,const double& rhs_x){
+         return lhs_x / rhs_x;
+      }
+
+   inline static const
+      double dx(const double& lhs_x, const double& lhs_dx, const double& rhs_x, const double& rhs_dx){
+         return (lhs_dx*rhs_x - lhs_x*rhs_dx)/(rhs_x*rhs_x);
       }
 };
 

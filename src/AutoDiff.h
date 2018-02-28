@@ -27,7 +27,12 @@ class AutoDiff : public ADBase< AutoDiff<nDeriv> >
       typedef class AutoDiff Derived;
       typedef class ADBase< AutoDiff<nDeriv> > Base;
 
-      AutoDiff() {};
+      AutoDiff() {
+         _x = 0.0;
+         for(int i=0;i<nDeriv;i++) {
+            _dx[i] = 0.0;
+         }
+      }
 
       AutoDiff(const AutoDiff&)=default;
       AutoDiff(AutoDiff&&)=default;

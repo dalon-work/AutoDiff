@@ -19,6 +19,10 @@ int main()
    cout << "a: " << a << endl;
    cout << "b: " << b << endl;
 
+   b = a*a/a - a + a;
+
+   cout << "a: " << a << endl;
+   cout << "b: " << b << endl;
 
 }
 
